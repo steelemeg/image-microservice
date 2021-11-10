@@ -22,7 +22,7 @@ context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
 params.ssl_options = pika.SSLOptions(context, server_hostname='CLOUDAMQP_HOST')
 connection = pika.BlockingConnection(params)
 channel = connection.channel() # start a channel
-channel.queue_declare(queue='resize-megan') # Declare a queue
+channel.queue_declare(queue='resize') # Declare a queue
 # Set up image resizing client
 resizer = ImageClient()
 
