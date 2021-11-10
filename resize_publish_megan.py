@@ -21,7 +21,7 @@ class ResizeClient(object):
 
         self.channel = self.connection.channel()
 
-        result = self.channel.queue_declare(queue='resize-megan', exclusive=False)
+        result = self.channel.queue_declare(queue='resize-megan-callback', exclusive=False, auto_delete=True)
         self.callback_queue = result.method.queue
 
         self.channel.basic_consume(
@@ -54,8 +54,8 @@ resize_client = ResizeClient()
 # SAMPLE PUBLISHING MESSAGE
 message = {
   'image_url': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Savannah_Cat_portrait.jpg/800px-Savannah_Cat_portrait.jpg',
-  'height': 500,
-  'width': 500,
+  'height': 200,
+  'width': 200,
   'scale_option': 'fill'
 }
 

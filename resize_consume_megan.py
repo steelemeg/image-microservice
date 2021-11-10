@@ -8,9 +8,15 @@ from sirv import ImageClient
 # Load environmental variables
 load_dotenv()
 
-# Access the CLOUDAMQP_URL environment variable 
-# and parse it (fallback to localhost)
-url = os.environ.get('CLOUDAMQP_URL')
+url = ""
+
+if os.path.isfile('secrets.py'):
+    import secrets
+    url = secrets.CLOUDAMQP_URL
+else:
+    # Access the CLOUDAMQP_URL environment variable
+    url = os.environ.get('CLOUDAMQP_URL')
+
 params = pika.URLParameters(url)
 context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
 params.ssl_options = pika.SSLOptions(context, server_hostname='CLOUDAMQP_HOST')
@@ -34,7 +40,7 @@ def on_request(ch, method, properties, body):
   if is_json:
     print("-------Request Received--------")
     request = json.loads(body)
-    print(request)
+    print(request, properties.reply_to)
     # Check if required keys are there
     # REQUIRED: image_url, height, width
     if 'image_url' in request and 'height' in request \

@@ -10,8 +10,20 @@ load_dotenv()
 class ImageClient(object):
 
     def __init__(self):
+        sirv_save, sirv_client_id, sirv_secret = ("",)* 3
+        if os.path.isfile('secrets.py'):
+            import secrets
+            sirv_save = secrets.SIRV_IMG_SAVE_LOCATION
+            sirv_client_id = secrets.SIRV_CLIENT_ID
+            sirv_secret = secrets.SIRV_SECRET
+        else:
+            sirv_save = os.environ.get("SIRV_IMG_SAVE_LOCATION")
+            sirv_client_id = os.environ.get("SIRV_CLIENT_ID")
+            sirv_secret = os.environ.get("SIRV_SECRET")
         self.url = "api.sirv.com"
-        self.image_location_url = os.environ.get("SIRV_IMG_SAVE_LOCATION")
+        self.secret = sirv_secret
+        self.client_id = sirv_client_id
+        self.image_location_url = sirv_save
         self.token = ''
         self.last_retrieved_token = dt.now()
 
@@ -40,7 +52,7 @@ class ImageClient(object):
         if elapsed_seconds >= 1200 or self.token == '':
             #print("Token has expired.")
             self.last_retrieved_token = dt.now()
-            payload = {"clientId": os.environ.get('SIRV_CLIENT_ID'), "clientSecret": os.environ.get('SIRV_SECRET')}
+            payload = {"clientId": self.client_id, "clientSecret": self.secret}
             headers = {"Content-Type" : "application/json"}
             endpoint = '/v2/token'
             response = self.__send_token_request(headers, json.dumps(payload), endpoint, "POST")
